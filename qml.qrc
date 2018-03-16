@@ -6,5 +6,7 @@
         <file>PetsModel.qml</file>
         <file>JiraSimpleModel.qml</file>
         <file>methods.js</file>
+        <file>IssueCard.qml</file>
+        <file>minor.svg</file>
     </qresource>
 </RCC>

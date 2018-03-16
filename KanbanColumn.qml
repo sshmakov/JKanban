@@ -9,19 +9,7 @@ Rectangle {
 
     width: 300; height: 400
     property string title: ""
-    property variant issues: []
-//    property ListModel model: ListModel { id: kmodel }
-    onIssuesChanged: {
-        kmodel.clear()
-        for(var i=0; i<issues.count; i++) {
-            kmodel.append(issues.get(i))
-        }
-
-//        for(var i=0; i<issues.length; i++) {
-//            var iss = issues[i]
-//            kmodel.append(iss)
-//        }
-    }
+    property variant issues: null
 
     Component {
         id: dragDelegate
@@ -78,11 +66,10 @@ Rectangle {
                     id: column
                     anchors { fill: parent; margins: 2 }
 
-                    Text { text: key }
-                    Text { text: typeof priority == 'undefined' ? "" : priority.name }
-                    Text { text: summary }
-                    Text { text: creator }
-                    Text { text: typeof assignee == 'undefined' ? "" : assignee }
+                    IssueCard {
+                        id: card
+                        issue: issueRecord
+                    }
                 }
             }
 
@@ -172,13 +159,7 @@ Rectangle {
         }
 //![2]
 //![5]
-        model: ListModel { id: kmodel }
-//        model: JiraSimpleModel {}
-//        model: JiraModel {
-//            //json : '{ "issues": [{ "key":"K-1", "summary":"This is test issue","name":"John Smith","key":"50"}] }'
-//            query: "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
-
-//        }
+        model: root.issues
         delegate: dragDelegate
     }
 //![0]

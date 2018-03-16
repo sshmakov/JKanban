@@ -110,15 +110,17 @@ function readIssues()
                 var v = getValue(item,"fields/status/name")
                 if(!(v in models))
                     models[v] = []
-                models[v].push({
-                                   key: item["key"],
-                                   summary: getValue(item,"fields/summary"),
-                                   assignee: getValue(item,"fields/assignee/displayName"),
-                                   creator: getValue(item,"fields/creator/displayName"),
-                                   status: getValue(item,"fields/status/name"),
-                                   priority: getValue(item,"fields/priority"),
-                                   resolution: getValue(item,"fields/resolution")
-                               })
+                models[v].push({ issueRecord: item }
+//                               {
+//                                   key: item["key"],
+//                                   summary: getValue(item,"fields/summary"),
+//                                   assignee: getValue(item,"fields/assignee/displayName"),
+//                                   creator: getValue(item,"fields/creator/displayName"),
+//                                   status: getValue(item,"fields/status/name"),
+//                                   priority: getValue(item,"fields/priority"),
+//                                   resolution: getValue(item,"fields/resolution")
+//                               }
+                               )
             }
             for(var i in groups)
             {
