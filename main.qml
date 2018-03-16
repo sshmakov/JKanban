@@ -28,94 +28,106 @@ ApplicationWindow {
     }
 
     Button {
-        id: button1
-        y: 424
-        text: qsTr("Button")
-        anchors.left: parent.left
-        anchors.leftMargin: 73
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 33
+        id: goButton
+        text: qsTr("Go")
+        anchors.top: parent.top
+        anchors.topMargin: 8
+        anchors.rightMargin: 8
+        anchors.right: parent.right
         onClicked: JS.readIssues()
     }
     ListView {
+        anchors.rightMargin: 8
+        anchors.leftMargin: 8
+        anchors.topMargin: 6
         //id: view
+        clip: true
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
-        anchors.top: parent.top
+        anchors.bottomMargin: 8
+        anchors.top: groupsTE.bottom
         anchors.right: parent.right
         anchors.left: parent.left
         orientation: ListView.Horizontal
-//        anchors.fill: parent
         model: ListModel { id: model}
-        delegate: KanbanColumn {
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            title: groupName
-            issues: issueList
-        }
-//        delegate: Text { text: key + ' ' + status + ' ' + summary + ' ' + assignee}
-        //delegate: Text { text: assignee }
-//        Component.onCompleted: {
-//            var xhr = new XMLHttpRequest;
-//            xhr.open("GET", "http://inqstatsapi.inqubu.com/?api_key=YOURKEYHERE&data=population&countries=us");
-//            xhr.onreadystatechange = function() {
-//                if (xhr.readyState === XMLHttpRequest.DONE) {
-//                    var data = JSON.parse(xhr.responseText);
-//                    model.clear();
-//                    var list = data[0]["population"];
-//                    for (var i in list) {
-//                        model.append({year: list[i]["year"], population: list[i]["data"]});
-//                    }
-        //                }
-        //            }
-        //            xhr.send();
-        //        }
+//        delegate: KanbanColumn {
+//            anchors.top: parent.top
+//            anchors.bottom: parent.bottom
+//            title: groupName
+//            issues: issueList
+//        }
     }
 
-    Button {
-        id: button2
-        y: 424
-        text: qsTr("Button")
+    TextEdit {
+        id: queryTE
+        height: 20
+        text: qsTr("Text Edit")
+        cursorVisible: true
+        anchors.right: goButton.left
+        anchors.rightMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 247
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 33
-        onClicked: {
-            var db = LocalStorage.openDatabaseSync("JKanban", "1.0", "", 1000000);
-
-            db.transaction(
-                        function(tx) {
-                            // Create the database if it doesn't already exist
-                            tx.executeSql('CREATE TABLE IF NOT EXISTS Settings(skey TEXT, svalue TEXT)');
-                            var rs = tx.executeSql('select skey, svalue from Settings')
-
-                            var r = ""
-                            var c = rs.rows.length
-                            for(var i = 0; i < rs.rows.length; i++) {
-                                var skey = rs.rows.item(i).skey
-                                var svalue = rs.rows.item(i).svalue
-                                r += skey + ", " + svalue + "\n"
-                                if (skey === "jiraGroups")
-                                    applicationWindow1.jiraGroups = svalue
-                            }
-                            text1.text = 'readed: ' + c + '\n' + r
-                        }
-                        )
-
-        }
+        anchors.leftMargin: 8
+        font.pixelSize: 12
     }
 
     Text {
         id: text1
-        x: 390
-        y: 386
-        width: 233
-        height: 73
-        text: qsTr("Text")
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 21
+        x: 8
+        y: 37
+        text: qsTr("Группы:")
+        font.pixelSize: 12
+    }
+
+    GroupBox {
+        id: groupBox1
+        //x: 380
+        visible: false
+        anchors.top: groupsTE.bottom
+        anchors.topMargin: 6
+        anchors.right: buttonGroups.left
+        anchors.rightMargin: 6
+        title: qsTr("Отображать группы ")
+
+        Column {
+            id: column1
+
+            CheckBox {
+                id: checkBox1
+                text: qsTr("Low")
+            }
+
+            CheckBox {
+                id: checkBox2
+                text: qsTr("Medium")
+            }
+
+            CheckBox {
+                id: checkBox3
+                text: qsTr("High")
+            }
+        }
+    }
+
+    Button {
+        id: buttonGroups
+        x: 496
+        y: 33
+        text: qsTr("Выбрать")
         anchors.right: parent.right
-        anchors.rightMargin: 26
+        anchors.rightMargin: 78
+    }
+
+    TextEdit {
+        id: groupsTE
+        height: 20
+        text: qsTr("Text Edit")
+        anchors.top: queryTE.bottom
+        anchors.topMargin: 6
+        anchors.right: buttonGroups.left
+        anchors.rightMargin: 6
+        anchors.left: text1.right
+        anchors.leftMargin: 6
         font.pixelSize: 12
     }
 }

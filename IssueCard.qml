@@ -21,7 +21,6 @@ Rectangle {
         assigneeText.text = v === null ? "(no assigned)" : v
         var img = JS.getValue(issue,"fields/priority/iconUrl")
         var txt = JS.getValue(issue,"fields/priority/name")
-        console.log(img)
         priorityImage.source = typeof img == 'undefined' || img === null ? "" : img
     }
 

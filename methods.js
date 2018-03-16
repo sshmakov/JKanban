@@ -136,6 +136,7 @@ function readIssues()
         }
     }
     var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
-    doc.open("GET", "file:///C:/Projects/qml/search.json");
+    var local = "file:///C:/Projects/qml/search.json"
+    doc.open("GET", local);
     doc.send();
 }

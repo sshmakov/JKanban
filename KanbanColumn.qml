@@ -7,7 +7,7 @@ import "methods.js" as Utils
 Rectangle {
     id: root
 
-    width: 300; height: 400
+    width: 300; height: 300
     property string title: ""
     property variant issues: null
 
@@ -30,7 +30,7 @@ Rectangle {
             onPressAndHold: held = true
             onReleased: held = false
 
-            Rectangle {
+            Item {
                 id: content
 
                 anchors {
@@ -39,13 +39,13 @@ Rectangle {
                 }
                 width: dragArea.width; height: column.implicitHeight + 4
 
-                border.width: 1
-                border.color: "lightsteelblue"
+                //border.width: 1
+                //border.color: "lightsteelblue"
 
-                color: dragArea.held ? "lightsteelblue" : "white"
-                Behavior on color { ColorAnimation { duration: 100 } }
+                //color: dragArea.held ? "lightsteelblue" : "white"
+                //Behavior on color { ColorAnimation { duration: 100 } }
 
-                radius: 2
+                //radius: 2
 
                 Drag.active: dragArea.held
                 Drag.source: dragArea
@@ -84,10 +84,10 @@ Rectangle {
             }
         }
     }
-//![0]
+
     DelegateModel {
         id: visualModel
-//![4]
+
         property var lessThan: [
             function(left, right) { return left.key < right.key },
             function(left, right) { return left.summary < right.summary },
@@ -106,14 +106,12 @@ Rectangle {
             }
             */
         ]
-//![4]
-//![6]
 
         property int sortOrder: 0 //orderSelector.selectedIndex
-        onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
+        onSortOrderChanged: {
+            items.setGroups(0, items.count, "unsorted")
+        }
 
-//![6]
-//![3]
         function insertPosition(lessThan, item) {
             var lower = 0
             var upper = items.count
@@ -138,38 +136,32 @@ Rectangle {
                 items.move(item.itemsIndex, index)
             }
         }
-//![3]
 
-//![1]
         items.includeByDefault: false
-//![5]
         groups: VisualDataGroup {
             id: unsortedItems
             name: "unsorted"
 
             includeByDefault: true
-//![1]
             onChanged: {
                 if (visualModel.sortOrder == visualModel.lessThan.length)
                     setGroups(0, count, "items")
                 else
                     visualModel.sort(visualModel.lessThan[visualModel.sortOrder])
             }
-//![2]
         }
-//![2]
-//![5]
         model: root.issues
         delegate: dragDelegate
     }
-//![0]
 
     ListView {
         id: view
 
         anchors {
             left: parent.left; top: titleRect.bottom;
-            right: parent.right; bottom: orderSelector.top;
+            right: parent.right;
+            bottom: parent.bottom;
+//            bottom: orderSelector.top;
             margins: 2
         }
 
@@ -202,14 +194,14 @@ Rectangle {
             }
         }
     }
-    ListSelector {
-        id: orderSelector
+//    ListSelector {
+//        id: orderSelector
 
-        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 2 }
+//        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 2 }
 
-        label: "Sort By"
-        list: [ "Key", "Summary", "Creator", "Assignee", "Custom" ]
-        onSelectedIndexChanged: visualModel.sortOrder = selectedIndex
-    }
+//        label: "Sort By"
+//        list: [ "Key", "Summary", "Creator", "Assignee", "Custom" ]
+//        onSelectedIndexChanged: visualModel.sortOrder = selectedIndex
+//    }
 
 }
