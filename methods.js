@@ -88,3 +88,52 @@ function getValue(json, path)
     }
     return json;
 }
+
+function readIssues()
+{
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
+            //                    showRequestInfo("Headers -->");
+            //                    showRequestInfo(doc.getAllResponseHeaders ());
+            //                    showRequestInfo("Last modified -->");
+            //                    showRequestInfo(doc.getResponseHeader ("Last-Modified"));
+
+        } else if (doc.readyState == XMLHttpRequest.DONE) {
+            var data = JSON.parse(doc.responseText);
+            model.clear();
+            var groups = applicationWindow1.jiraGroups.split(';')
+            var models = {}
+            var list = data["issues"];
+            for (var i in list) {
+                var item = list[i]
+                var v = getValue(item,"fields/status/name")
+                if(!(v in models))
+                    models[v] = []
+                models[v].push({
+                                   key: item["key"],
+                                   summary: getValue(item,"fields/summary"),
+                                   assignee: getValue(item,"fields/assignee/displayName"),
+                                   creator: getValue(item,"fields/creator/displayName"),
+                                   status: getValue(item,"fields/status/name"),
+                                   priority: getValue(item,"fields/priority"),
+                                   resolution: getValue(item,"fields/resolution")
+                               })
+            }
+            for(var i in groups)
+            {
+                var g = groups[i]
+                var iss = []
+                if(g in models)
+                    iss = models[g]
+                model.append({
+                                 groupName: g,
+                                 issueList: iss
+                             });
+            }
+        }
+    }
+    var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
+    doc.open("GET", "file:///C:/Projects/qml/search.json");
+    doc.send();
+}

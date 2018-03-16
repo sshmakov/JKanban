@@ -8,6 +8,20 @@ Rectangle {
     id: root
 
     width: 300; height: 400
+    property string title: ""
+    property variant issues: []
+//    property ListModel model: ListModel { id: kmodel }
+    onIssuesChanged: {
+        kmodel.clear()
+        for(var i=0; i<issues.count; i++) {
+            kmodel.append(issues.get(i))
+        }
+
+//        for(var i=0; i<issues.length; i++) {
+//            var iss = issues[i]
+//            kmodel.append(iss)
+//        }
+    }
 
     Component {
         id: dragDelegate
@@ -65,9 +79,10 @@ Rectangle {
                     anchors { fill: parent; margins: 2 }
 
                     Text { text: key }
+                    Text { text: typeof priority == 'undefined' ? "" : priority.name }
                     Text { text: summary }
                     Text { text: creator }
-                    Text { text: assignee }
+                    Text { text: typeof assignee == 'undefined' ? "" : assignee }
                 }
             }
 
@@ -107,7 +122,7 @@ Rectangle {
 //![4]
 //![6]
 
-        property int sortOrder: orderSelector.selectedIndex
+        property int sortOrder: 0 //orderSelector.selectedIndex
         onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
 
 //![6]
@@ -157,7 +172,8 @@ Rectangle {
         }
 //![2]
 //![5]
-        model: JiraSimpleModel {}
+        model: ListModel { id: kmodel }
+//        model: JiraSimpleModel {}
 //        model: JiraModel {
 //            //json : '{ "issues": [{ "key":"K-1", "summary":"This is test issue","name":"John Smith","key":"50"}] }'
 //            query: "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
@@ -166,11 +182,13 @@ Rectangle {
         delegate: dragDelegate
     }
 //![0]
+
     ListView {
         id: view
 
         anchors {
-            left: parent.left; top: parent.top; right: parent.right; bottom: orderSelector.top;
+            left: parent.left; top: titleRect.bottom;
+            right: parent.right; bottom: orderSelector.top;
             margins: 2
         }
 
@@ -180,6 +198,29 @@ Rectangle {
         cacheBuffer: 50
     }
 
+    Rectangle {
+        id: titleRect
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            margins: 2
+        }
+        color: "lightsteelblue"
+//        border.width: 1
+//        border.color: "lightsteelblue"
+        height: titleText.height+10
+        Text {
+            id: titleText
+            text: root.title
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+                margins: 2
+            }
+        }
+    }
     ListSelector {
         id: orderSelector
 
@@ -187,5 +228,7 @@ Rectangle {
 
         label: "Sort By"
         list: [ "Key", "Summary", "Creator", "Assignee", "Custom" ]
+        onSelectedIndexChanged: visualModel.sortOrder = selectedIndex
     }
+
 }

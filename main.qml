@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import "methods.js" as Utils
+import "methods.js" as JS
 import QtQuick.LocalStorage 2.0
 //import KanbanColumn 1.0
 
@@ -10,6 +10,8 @@ ApplicationWindow {
     width: 649
     height: 480
     title: qsTr("Hello World")
+    property string jiraGroups: "Gathering Interest;Open;Verified"
+
 
     menuBar: MenuBar {
         Menu {
@@ -25,68 +27,33 @@ ApplicationWindow {
         }
     }
 
-//    TextArea {
-//        id: textArea1
-//        x: 61
-//        y: 36
-//        width: 501
-//        height: 299
-//    }
-
     Button {
         id: button1
-        x: 73
-        y: 366
+        y: 424
         text: qsTr("Button")
-        onClicked: {
-            var doc = new XMLHttpRequest();
-            doc.onreadystatechange = function() {
-                if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
-//                    showRequestInfo("Headers -->");
-//                    showRequestInfo(doc.getAllResponseHeaders ());
-//                    showRequestInfo("Last modified -->");
-//                    showRequestInfo(doc.getResponseHeader ("Last-Modified"));
-
-                } else if (doc.readyState == XMLHttpRequest.DONE) {
-//                    var text = doc.responseText
-//                    JSON.parse(text)
-                    var data = JSON.parse(doc.responseText);
-                    model.clear();
-                    var list = data["issues"];
-                    for (var i in list) {
-                        var item = list[i]
-                        model.append({
-                                         key: item["key"],
-                                         summary: Utils.getValue(item,"fields/summary"),
-                                         assignee: Utils.getValue(item,"fields/assignee/displayName"),
-                                         creator: Utils.getValue(item,"fields/creator/displayName"),
-                                         status: Utils.getValue(item,"fields/status/name"),
-                                     });
-                    }
-//                    var a = doc.responseXML.documentElement;
-//                    for (var ii = 0; ii < a.childNodes.length; ++ii) {
-//                        showRequestInfo(a.childNodes[ii].nodeName);
-//                    }
-//                    showRequestInfo("Headers -->");
-//                    showRequestInfo(doc.getAllResponseHeaders ());
-//                    showRequestInfo("Last modified -->");
-//                    showRequestInfo(doc.getResponseHeader ("Last-Modified"));
-                }
-            }
-            var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
-            doc.open("GET", "file:///C:/Projects/qml/search.json");
-            doc.send();
-        }
+        anchors.left: parent.left
+        anchors.leftMargin: 73
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 33
+        onClicked: JS.readIssues()
     }
     ListView {
-        x: 61
-        y: 36
-        width: 501
-        height: 235
-        //orientation: ListView.Horizontal
+        //id: view
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.left: parent.left
+        orientation: ListView.Horizontal
 //        anchors.fill: parent
         model: ListModel { id: model}
-        delegate: Text { text: key + ' ' + status + ' ' + summary + ' ' + assignee}
+        delegate: KanbanColumn {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            title: groupName
+            issues: issueList
+        }
+//        delegate: Text { text: key + ' ' + status + ' ' + summary + ' ' + assignee}
         //delegate: Text { text: assignee }
 //        Component.onCompleted: {
 //            var xhr = new XMLHttpRequest;
@@ -107,9 +74,12 @@ ApplicationWindow {
 
     Button {
         id: button2
-        x: 246
-        y: 366
+        y: 424
         text: qsTr("Button")
+        anchors.left: parent.left
+        anchors.leftMargin: 247
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 33
         onClicked: {
             var db = LocalStorage.openDatabaseSync("JKanban", "1.0", "", 1000000);
 
@@ -122,7 +92,11 @@ ApplicationWindow {
                             var r = ""
                             var c = rs.rows.length
                             for(var i = 0; i < rs.rows.length; i++) {
-                                r += rs.rows.item(i).skey + ", " + rs.rows.item(i).svalue + "\n"
+                                var skey = rs.rows.item(i).skey
+                                var svalue = rs.rows.item(i).svalue
+                                r += skey + ", " + svalue + "\n"
+                                if (skey === "jiraGroups")
+                                    applicationWindow1.jiraGroups = svalue
                             }
                             text1.text = 'readed: ' + c + '\n' + r
                         }
@@ -133,11 +107,15 @@ ApplicationWindow {
 
     Text {
         id: text1
-        x: 368
-        y: 290
+        x: 390
+        y: 386
         width: 233
-        height: 142
+        height: 73
         text: qsTr("Text")
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 21
+        anchors.right: parent.right
+        anchors.rightMargin: 26
         font.pixelSize: 12
     }
 }
