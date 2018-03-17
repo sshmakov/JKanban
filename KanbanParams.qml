@@ -12,17 +12,14 @@ Item {
 
     Text {
         id: label
-        width: 83
         height: cbGroupField.height
         text: qsTr("Группировать:")
         verticalAlignment: Text.AlignVCenter
-        //font.pixelSize:122
     }
 
     ComboBox {
         id: cbGroupField
-        y: 0
-        anchors { left: label.right; leftMargin: 2 }
+        anchors { left: label.right; leftMargin: 4 }
         model: ListModel {
             ListElement {
                 text: qsTr("по статусам")
@@ -43,8 +40,9 @@ Item {
         text: ''
         anchors {
             right: buttonGroups.left
-            rightMargin: 6
+            rightMargin: 4
             left: cbGroupField.right
+            leftMargin: 4
         }
     }
 
