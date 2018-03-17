@@ -69,6 +69,7 @@ Rectangle {
                     IssueCard {
                         id: card
                         issue: issueRecord
+                        width: parent.width
                     }
                 }
             }
@@ -179,18 +180,22 @@ Rectangle {
             right: parent.right
             margins: 2
         }
-        color: "lightsteelblue"
-//        border.width: 1
+        color: "#cfe5ff"
+        //        border.width: 1
 //        border.color: "lightsteelblue"
         height: titleText.height+10
         Text {
             id: titleText
             text: root.title
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            font.pointSize: 12
             anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-                margins: 2
+                centerIn: parent
+//                top: parent.top
+//                left: parent.left
+//                right: parent.right
+//                margins: 2
             }
         }
     }

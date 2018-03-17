@@ -42,7 +42,7 @@ function repaintKanban()
     saveSetting('jiraGroupIndex', kanbanParams1.groupVariant)
     model.clear()
     var list = mainModel
-    var groups = kanbanParams1.groupList.split(',')
+    var groups = kanbanParams1.groupList.trim().split(',')
     var gPath = kanbanParams1.groupValuePath
     var models = {}
     for(var i in list) {

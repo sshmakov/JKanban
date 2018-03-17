@@ -3,8 +3,18 @@ import "methods.js" as JS
 
 Rectangle {
     id: rectangle1
-    color: "#fbeded"
+    color: "#f1dada"
     radius: 10
+    gradient: Gradient {
+        GradientStop {
+            position: 0.00;
+            color: "#f5f2d8";
+        }
+        GradientStop {
+            position: 1.00;
+            color: "#ffffff";
+        }
+    }
     border.color: "#abfdf4"
     width: 300
     height: 150
@@ -15,7 +25,9 @@ Rectangle {
         var re = new RegExp("(https*:\/\/[^\/]+\/).+")
         var key = JS.getValue(issue,"key")
         var url = self.replace(re,'$1')+'browse/'+key
-        keyText.text = '<a href="'+url+'" >'+key+'</a>'
+//        keyText.text = '<a href="'+url+'" >'+key+'</a>'
+        keyText.text = key
+        keyText.url = url
         summaryText.text = JS.getValue(issue,"fields/summary")
         dateText.text = (new Date(JS.getValue(issue,"fields/created"))).toLocaleString()
         creatorText.text = JS.getValue(issue,"fields/creator/displayName")
@@ -30,19 +42,21 @@ Rectangle {
 
     Text {
         id: keyText
-        text: "<a href='http://ya.ru'>JIRASERVER-1001</a>"
+        text: "JIRASERVER-1001"
+        property string url: ""
         anchors.top: parent.top
         anchors.topMargin: 8
         anchors.left: parent.left
         anchors.leftMargin: 8
         font.bold: true
         font.pixelSize: 14
-        onLinkActivated: Qt.openUrlExternally(link)
-        linkColor: color
+//        onLinkActivated: Qt.openUrlExternally(link)
+//        linkColor: color
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.NoButton
+//            acceptedButtons: Qt.NoButton
+            onClicked: Qt.openUrlExternally(parent.url)
         }
     }
 
