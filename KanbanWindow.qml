@@ -9,6 +9,9 @@ Rectangle {
     height: 480
     color: "#e0edf6"
     clip: true
+    Component.onCompleted: JS.loadSettings()
+
+    property var mainModel: []
 
     Button {
         id: goButton
@@ -43,8 +46,8 @@ Rectangle {
 
     TextField {
         id: queryTE
-//        height: 28
-        text: qsTr("Text Edit")
+        //        height: 28
+        text: "file:///C:/Projects/qml/search.json"
         anchors.right: goButton.left
         anchors.rightMargin: 4
         anchors.top: parent.top
@@ -65,7 +68,4 @@ Rectangle {
     }
 
 
-    property var mainModel: []
-
 }
-

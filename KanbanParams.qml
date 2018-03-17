@@ -1,13 +1,14 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import QtQuick.LocalStorage 2.0
 import "methods.js" as JS
 
 Item {
     width: 480
     height: cbGroupField.height
-    property string groupVariant: cbGroupField.currentIndex
+    property alias groupVariant: cbGroupField.currentIndex
     property string groupValuePath: cbGroupField.model.get(cbGroupField.currentIndex).namePath
-    property string groupList: groupsTE.text
+    property alias groupList: groupsTE.text
 
     Text {
         id: label
