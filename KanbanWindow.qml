@@ -17,7 +17,7 @@ Rectangle {
         anchors.topMargin: 8
         anchors.rightMargin: 8
         anchors.right: parent.right
-        onClicked: JS.readIssues()
+        onClicked: JS.readIssues(queryTE.text)
     }
 
     ListView {
@@ -43,7 +43,7 @@ Rectangle {
 
     TextField {
         id: queryTE
-        height: 28
+//        height: 28
         text: qsTr("Text Edit")
         anchors.right: goButton.left
         anchors.rightMargin: 4
@@ -66,6 +66,6 @@ Rectangle {
 
 
     property var mainModel: []
-    property string jiraGroups: "*"
+
 }
 

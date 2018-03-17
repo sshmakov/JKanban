@@ -11,11 +11,13 @@ Rectangle {
 
     property variant issue: null
     onIssueChanged: {
-        var p = JS.getValue(issue,"fields/project/key")
+        var self = JS.getValue(issue,"self")
+        var re = new RegExp("(https*:\/\/[^\/]+\/).+")
         var key = JS.getValue(issue,"key")
-        keyText.text = key
+        var url = self.replace(re,'$1')+'browse/'+key
+        keyText.text = '<a href="'+url+'" >'+key+'</a>'
         summaryText.text = JS.getValue(issue,"fields/summary")
-        dateText.text = JS.getValue(issue,"fields/created")
+        dateText.text = (new Date(JS.getValue(issue,"fields/created"))).toLocaleString()
         creatorText.text = JS.getValue(issue,"fields/creator/displayName")
         var v = JS.getValue(issue,"fields/assignee/displayName")
         assigneeText.text = v === null ? "(no assigned)" : v
@@ -34,6 +36,12 @@ Rectangle {
         font.bold: true
         font.pixelSize: 14
         onLinkActivated: Qt.openUrlExternally(link)
+        linkColor: color
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.NoButton
+        }
     }
 
     Text {

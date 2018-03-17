@@ -2,13 +2,12 @@ import QtQuick 2.0
 import QtQuick.Controls 1.2
 import "methods.js" as JS
 
-Rectangle {
-    id: rectangle1
+Item {
     width: 480
     height: cbGroupField.height
+    property string groupVariant: cbGroupField.currentIndex
     property string groupValuePath: cbGroupField.model.get(cbGroupField.currentIndex).namePath
     property string groupList: groupsTE.text
-    color: "white"
 
     Text {
         id: label
@@ -19,19 +18,40 @@ Rectangle {
         //font.pixelSize:122
     }
 
+    ComboBox {
+        id: cbGroupField
+        y: 0
+        anchors { left: label.right; leftMargin: 2 }
+        model: ListModel {
+            ListElement {
+                text: qsTr("по статусам")
+                namePath: "fields/status/name"
+            }
+            ListElement {
+                text: qsTr("по исполнителям")
+                namePath: "fields/assignee/displayName"
+            }
+            ListElement {
+                text: qsTr("по создателям")
+                namePath: "fields/creator/displayName"
+            }
+        }
+    }
+    TextField {
+        id: groupsTE
+        text: ''
+        anchors {
+            right: buttonGroups.left
+            rightMargin: 6
+            left: cbGroupField.right
+        }
+    }
+
     Button {
         id: buttonGroups
         text: qsTr("Перерисовать")
         anchors.right: parent.right
         onClicked: JS.repaintKanban()
-    }
-
-    TextField {
-        id: groupsTE
-        text: ''
-        anchors.rightMargin: 6
-        anchors.right: buttonGroups.left
-        anchors.left: cbGroupField.right
     }
 
     Rectangle {
@@ -77,23 +97,4 @@ Rectangle {
         }
     }
 
-    ComboBox {
-        id: cbGroupField
-        y: 0
-        anchors.left: label.right
-        model: ListModel {
-            ListElement {
-                text: qsTr("по статусам")
-                namePath: "fields/status/name"
-            }
-            ListElement {
-                text: qsTr("по исполнителям")
-                namePath: "fields/assignee/displayName"
-            }
-            ListElement {
-                text: qsTr("по создателям")
-                namePath: "fields/creator/displayName"
-            }
-        }
-    }
 }
