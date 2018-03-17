@@ -33,6 +33,10 @@ Item {
                 text: qsTr("по создателям")
                 namePath: "fields/creator/displayName"
             }
+            ListElement {
+                text: qsTr("по типам запросов")
+                namePath: "fields/issuetype/name"
+            }
         }
     }
     TextField {

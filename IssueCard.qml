@@ -24,6 +24,8 @@ Rectangle {
         var img = JS.getValue(issue,"fields/priority/iconUrl")
         var txt = JS.getValue(issue,"fields/priority/name")
         priorityImage.source = typeof img == 'undefined' || img === null ? "" : img
+        img = JS.getValue(issue,"fields/issuetype/iconUrl")
+        typeImage.source = typeof img == 'undefined' || img === null ? "" : img
     }
 
     Text {
@@ -69,6 +71,18 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 8
         source: "minor.svg"
+    }
+
+    Image {
+        id: typeImage
+        x: 276
+        width: 16
+        height: 16
+        anchors.top: parent.top
+        anchors.topMargin: 9
+        anchors.right: priorityImage.left
+        anchors.rightMargin: 4
+        source: ""
     }
 
     Text {
