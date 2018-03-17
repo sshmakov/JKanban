@@ -101,7 +101,12 @@ function readIssues()
 
         } else if (doc.readyState == XMLHttpRequest.DONE) {
             var data = JSON.parse(doc.responseText);
+            mainModel = data["issues"]
+            repaintKanban()
+/*
+            var list = data["issues"];
             model.clear();
+            groupView.model.clear()
             var groups = applicationWindow1.jiraGroups.split(';')
             var models = {}
             var list = data["issues"];
@@ -110,17 +115,7 @@ function readIssues()
                 var v = getValue(item,"fields/status/name")
                 if(!(v in models))
                     models[v] = []
-                models[v].push({ issueRecord: item }
-//                               {
-//                                   key: item["key"],
-//                                   summary: getValue(item,"fields/summary"),
-//                                   assignee: getValue(item,"fields/assignee/displayName"),
-//                                   creator: getValue(item,"fields/creator/displayName"),
-//                                   status: getValue(item,"fields/status/name"),
-//                                   priority: getValue(item,"fields/priority"),
-//                                   resolution: getValue(item,"fields/resolution")
-//                               }
-                               )
+                models[v].push({ issueRecord: item } )
             }
             for(var i in groups)
             {
@@ -132,11 +127,50 @@ function readIssues()
                                  groupName: g,
                                  issueList: iss
                              });
+                groupView.model.append({
+                                           title: g
+                                       })
             }
+            */
+
         }
     }
     var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
     var local = "file:///C:/Projects/qml/search.json"
     doc.open("GET", local);
     doc.send();
+}
+
+function repaintKanban()
+{
+    model.clear()
+    var list = mainModel
+    var groups = kanbanParams1.groupList.split(',')
+    var gPath = kanbanParams1.groupValuePath
+    var models = {}
+    for(var i in list) {
+        var item = list[i]
+        var g = getValue(item, gPath)
+        if(!(g in models))
+            models[g] = []
+        models[g].push({ issueRecord: item } )
+    }
+    if(groups.length === 0 ||
+            (groups.length === 1 && groups[0] === '')) {
+        groups = []
+        for(g in models)
+            groups.push(g)
+    }
+    for(i in groups) {
+        g = groups[i]
+        var iss = []
+        if(g in models)
+            iss = models[g]
+        if(g === null)
+            g = '(null)'
+        model.append({
+                         groupName: g,
+                         issueList: iss
+                     });
+    }
 }
