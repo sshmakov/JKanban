@@ -19,7 +19,7 @@ Rectangle {
     width: 300
     height: 150
 
-    property variant issue: null
+    property var issue: null
     onIssueChanged: {
         var self = JS.getValue(issue,"self")
         var re = new RegExp("(https*:\/\/[^\/]+\/).+")
