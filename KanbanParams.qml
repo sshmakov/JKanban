@@ -37,6 +37,10 @@ Item {
                 text: qsTr("по типам запросов")
                 namePath: "fields/issuetype/name"
             }
+            ListElement {
+                text: qsTr("по приоритетам")
+                namePath: "fields/priority/name"
+            }
         }
     }
     TextField {
