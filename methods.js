@@ -25,9 +25,14 @@ function readIssues(queryUrl)
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
         if (doc.readyState == XMLHttpRequest.DONE) {
-            var data = JSON.parse(doc.responseText);
-            mainModel = data["issues"]
-            repaintKanban()
+            if(doc.status === 200) {
+                var data = JSON.parse(doc.responseText);
+                mainModel = data["issues"]
+                repaintKanban()
+            }
+            else {
+                console.log(doc.responseText)
+            }
         }
     }
     var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
