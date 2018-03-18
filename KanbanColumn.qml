@@ -22,7 +22,8 @@ Rectangle {
             anchors { left: parent.left; right: parent.right }
             height: content.height
 
-            enabled: visualModel.sortOrder == visualModel.lessThan.length
+            //enabled: visualModel.sortOrder == visualModel.lessThan.length
+            enabled: true
 
             drag.target: held ? content : undefined
             drag.axis: Drag.YAxis
