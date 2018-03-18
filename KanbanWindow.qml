@@ -12,6 +12,7 @@ Rectangle {
     Component.onCompleted: JS.loadSettings()
 
     property var mainModel: []
+    property var xhr: null
 
     Item {
         id: row1
@@ -42,7 +43,6 @@ Rectangle {
     }
     KanbanParams {
         id: kanbanParams1
-        visible: true
         anchors{
             top: row1.bottom
             right: parent.right

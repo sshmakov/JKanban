@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 649
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("JKanban")
 
     menuBar: MenuBar {
         Menu {

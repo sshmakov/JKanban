@@ -7,26 +7,15 @@ function getValue(json, path)
     return json;
 }
 
-function saveSetting(skey, svalue)
-{
-    var dbConn = LocalStorage.openDatabaseSync("JKanban", "1.0", "", 1000000);
-    dbConn.transaction(
-                function(tx)
-                {
-                    tx.executeSql('delete from Settings where skey = ?', [ skey ]);
-                    tx.executeSql('INSERT INTO Settings VALUES(?, ?)', [ skey, svalue ]);
-                }
-                )
-}
-
 function readIssues(queryUrl)
 {
     saveSetting('query',queryUrl)
-    var doc = new XMLHttpRequest();
-    doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
-            if(doc.status === 200) {
-                var data = JSON.parse(doc.responseText);
+    if(!xhr)
+        xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            if(xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
                 mainModel = data["issues"]
                 repaintKanban()
             }
@@ -37,8 +26,8 @@ function readIssues(queryUrl)
     }
     var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
     var local = "file:///C:/Projects/qml/search.json"
-    doc.open("GET", queryUrl);
-    doc.send();
+    xhr.open("GET", queryUrl);
+    xhr.send();
 }
 
 function repaintKanban()
@@ -102,5 +91,51 @@ function loadSettings()
                 }
                 )
 
+}
+
+function saveSetting(skey, svalue)
+{
+    var dbConn = LocalStorage.openDatabaseSync("JKanban", "1.0", "", 1000000);
+    dbConn.transaction(
+                function(tx)
+                {
+                    tx.executeSql('delete from Settings where skey = ?', [ skey ]);
+                    tx.executeSql('INSERT INTO Settings VALUES(?, ?)', [ skey, svalue ]);
+                }
+                )
+}
+
+function readIssuesSimple(queryUrl)
+{
+    saveSetting('query',queryUrl)
+    var doc = new XMLHttpRequest();
+    doc.onreadystatechange = function() {
+        if (doc.readyState == XMLHttpRequest.DONE) {
+            var data = JSON.parse(doc.responseText);
+            mainModel = data["issues"]
+            model.clear()
+            var list = mainModel
+            var gPath = "fields/assignee/displayName"
+            var models = {}
+            for(var i in list) {
+                var item = list[i]
+                var g = getValue(item, gPath)
+                if(!(g in models))
+                    models[g] = []
+                models[g].push({ issueRecord: item } )
+            }
+            for(g in models) {
+                var iss = models[g]
+                if(g === null)
+                    g = '(null)'
+                model.append({
+                                 groupName: g,
+                                 issueList: iss
+                             });
+            }
+        }
+    }
+    doc.open("GET", queryUrl);
+    doc.send();
 }
 
