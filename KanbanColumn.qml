@@ -38,7 +38,7 @@ Rectangle {
                     horizontalCenter: parent.horizontalCenter
                     verticalCenter: parent.verticalCenter
                 }
-                width: dragArea.width; height: column.implicitHeight + 4
+                width: dragArea.width; height: card.height + 4
 
                 //border.width: 1
                 //border.color: "lightsteelblue"
@@ -63,16 +63,24 @@ Rectangle {
                     }
                 }
 
-                Column {
-                    id: column
-                    anchors { fill: parent; margins: 2 }
+//                Column {
+//                    id: column
+//                    anchors { fill: parent; margins: 2 }
 
-                    IssueCard {
-                        id: card
-                        issue: issueRecord
-                        width: parent.width
-                    }
+                IssueCard {
+                    id: card
+                    issue: issueRecord
+                    anchors { fill: parent; margins: 2 }
+                    //width: parent.width
                 }
+//                }
+                Rectangle {
+                    anchors.fill: parent
+                    color: "lightsteelblue"
+                    visible: dragArea.held
+                    opacity: 0.5
+                }
+
             }
 
             DropArea {
@@ -90,29 +98,8 @@ Rectangle {
     DelegateModel {
         id: visualModel
 
-        property var lessThan: [
-            function(left, right) { return left.key < right.key },
-            function(left, right) { return left.summary < right.summary },
-            function(left, right) { return left.creator < right.creator },
-            function(left, right) { return left.assignee < right.assignee },
-          /*
-            function(left, right) {
-                if (left.size == "Small")
-                    return true
-                else if (right.size == "Small")
-                    return false
-                else if (left.size == "Medium")
-                    return true
-                else
-                    return false
-            }
-            */
-        ]
-
         property int sortOrder: 0 //orderSelector.selectedIndex
-        onSortOrderChanged: {
-            items.setGroups(0, items.count, "unsorted")
-        }
+        onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
 
         function insertPosition(lessThan, item) {
             var lower = 0
@@ -129,15 +116,6 @@ Rectangle {
             return lower
         }
 
-        function sort(lessThan) {
-            while (unsortedItems.count > 0) {
-                var item = unsortedItems.get(0)
-                var index = insertPosition(lessThan, item)
-
-                item.groups = "items"
-                items.move(item.itemsIndex, index)
-            }
-        }
 
         items.includeByDefault: false
         groups: VisualDataGroup {
@@ -145,12 +123,7 @@ Rectangle {
             name: "unsorted"
 
             includeByDefault: true
-            onChanged: {
-                if (visualModel.sortOrder == visualModel.lessThan.length)
-                    setGroups(0, count, "items")
-                else
-                    visualModel.sort(visualModel.lessThan[visualModel.sortOrder])
-            }
+            onChanged: setGroups(0, count, "items")
         }
         model: root.issues
         delegate: dragDelegate
