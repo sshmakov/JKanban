@@ -13,29 +13,54 @@ Rectangle {
 
     property var mainModel: []
 
-    Button {
-        id: goButton
-        text: qsTr("Go")
-        anchors.top: parent.top
-        anchors.topMargin: 8
-        anchors.rightMargin: 8
-        anchors.right: parent.right
-        onClicked: JS.readIssues(queryTE.text)
-    }
+    Item {
+        id: row1
 
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            margins: 4
+        }
+        height: Math.max(queryTE.implicitHeight, goButton.implicitHeight)
+
+        TextField {
+            id: queryTE
+            text: "file:///C:/Projects/qml/search.json"
+            anchors.rightMargin: 4
+            anchors.right: goButton.left
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+        }
+
+        Button {
+            id: goButton
+            text: qsTr("Go")
+            anchors.right: parent.right
+            onClicked: JS.readIssues(queryTE.text)
+        }
+    }
+    KanbanParams {
+        id: kanbanParams1
+        visible: true
+        anchors{
+            top: row1.bottom
+            right: parent.right
+            left: parent.left
+            margins: 4
+        }
+    }
     ListView {
-        anchors.topMargin: 6
-        anchors.rightMargin: 8
-        anchors.leftMargin: 8
-        //id: view
-        clip: true
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        anchors.top: kanbanParams1.bottom
-        anchors.right: parent.right
-        anchors.left: parent.left
+        anchors{
+            top: kanbanParams1.bottom
+            bottom: parent.bottom
+            right: parent.right
+            left: parent.left
+            margins: 4
+        }
         orientation: ListView.Horizontal
-        model: ListModel { id: model}
+        clip: true
+        model: ListModel { id: model }
         delegate: KanbanColumn {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -43,29 +68,4 @@ Rectangle {
             issues: issueList
         }
     }
-
-    TextField {
-        id: queryTE
-        //        height: 28
-        text: "file:///C:/Projects/qml/search.json"
-        anchors.right: goButton.left
-        anchors.rightMargin: 4
-        anchors.top: parent.top
-        anchors.topMargin: 8
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        font.pixelSize: 12
-    }
-
-    KanbanParams {
-        id: kanbanParams1
-        anchors.top: queryTE.bottom
-        anchors.topMargin: 6
-        anchors.rightMargin: 8
-        anchors.right: parent.right
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-    }
-
-
 }

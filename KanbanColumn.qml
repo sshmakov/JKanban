@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQml.Models 2.2
-//import JiraModel 1.0
 import "methods.js" as Utils
 
 
@@ -8,8 +7,8 @@ Rectangle {
     id: root
 
     width: 300; height: 300
-    property string title: ""
-    property variant issues: null
+    property string title: "Title"
+    property var issues: null
 
     Component {
         id: dragDelegate
@@ -22,7 +21,6 @@ Rectangle {
             anchors { left: parent.left; right: parent.right }
             height: content.height
 
-            //enabled: visualModel.sortOrder == visualModel.lessThan.length
             enabled: true
 
             drag.target: held ? content : undefined
@@ -40,14 +38,6 @@ Rectangle {
                 }
                 width: dragArea.width; height: card.height + 4
 
-                //border.width: 1
-                //border.color: "lightsteelblue"
-
-                //color: dragArea.held ? "lightsteelblue" : "white"
-                //Behavior on color { ColorAnimation { duration: 100 } }
-
-                //radius: 2
-
                 Drag.active: dragArea.held
                 Drag.source: dragArea
                 Drag.hotSpot.x: width / 2
@@ -63,17 +53,13 @@ Rectangle {
                     }
                 }
 
-//                Column {
-//                    id: column
-//                    anchors { fill: parent; margins: 2 }
-
                 IssueCard {
                     id: card
                     issue: issueRecord
                     anchors { fill: parent; margins: 2 }
-                    //width: parent.width
                 }
-//                }
+
+                // Закрашивание карточки при перемещении мышью
                 Rectangle {
                     anchors.fill: parent
                     color: "lightsteelblue"
@@ -95,10 +81,11 @@ Rectangle {
         }
     }
 
+
     DelegateModel {
         id: visualModel
 
-        property int sortOrder: 0 //orderSelector.selectedIndex
+        property int sortOrder: 0
         onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
 
         function insertPosition(lessThan, item) {
@@ -116,7 +103,6 @@ Rectangle {
             return lower
         }
 
-
         items.includeByDefault: false
         groups: VisualDataGroup {
             id: unsortedItems
@@ -129,23 +115,22 @@ Rectangle {
         delegate: dragDelegate
     }
 
+
+    // Вертикальный список карточек
     ListView {
         id: view
-
         anchors {
             left: parent.left; top: titleRect.bottom;
             right: parent.right;
             bottom: parent.bottom;
-//            bottom: orderSelector.top;
             margins: 2
         }
-
         model: visualModel
-
         spacing: 4
         cacheBuffer: 50
     }
 
+    // Заголовок столбца
     Rectangle {
         id: titleRect
         anchors {
@@ -155,8 +140,6 @@ Rectangle {
             margins: 2
         }
         color: "#cfe5ff"
-        //        border.width: 1
-//        border.color: "lightsteelblue"
         height: titleText.height+10
         Text {
             id: titleText
@@ -164,23 +147,7 @@ Rectangle {
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: 12
-            anchors {
-                centerIn: parent
-//                top: parent.top
-//                left: parent.left
-//                right: parent.right
-//                margins: 2
-            }
+            anchors.centerIn: parent
         }
     }
-//    ListSelector {
-//        id: orderSelector
-
-//        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 2 }
-
-//        label: "Sort By"
-//        list: [ "Key", "Summary", "Creator", "Assignee", "Custom" ]
-//        onSelectedIndexChanged: visualModel.sortOrder = selectedIndex
-//    }
-
 }
