@@ -7,47 +7,79 @@ function getValue(json, path)
     return json;
 }
 
-function readIssues(queryUrl)
+function sendGetRequest(url, handler)
 {
-    saveSetting('query',queryUrl)
-    if(!xhr)
+    console.log("sendGetRequest", url)
+
+    if(!xhr) {
         xhr = new XMLHttpRequest();
+    }
     xhr.onreadystatechange = function() {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-            if(xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                mainModel = data["issues"]
-                repaintKanban()
-            }
-            else {
-                console.log(doc.responseText)
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            title = "Done";
+            if (xhr.status === 200) {
+                handler(xhr);
+            } else {
+                handler(null);
+                messageDialog.title = "Error";
+                messageDialog.text = xhr.responseText;
+                messageDialog.open();
             }
         }
     }
-    var url = "https://jira.atlassian.com/rest/api/2/search?jql=project = 'JIRA Server (including JIRA Core)' AND updated >= -1w&maxResults=10"
-    var local = "file:///C:/Projects/qml/search.json"
-    xhr.open("GET", queryUrl);
+    title = "Waiting response ...";
+    xhr.open("GET", url);
+    xhr.setRequestHeader( 'Authorization', 'Basic ' + authHash)
     xhr.send();
+}
+
+function readIssues(queryUrl)
+{
+    sendGetRequest(queryUrl, function(request) {
+        if (request === null) {
+            mainModel = [];
+        } else {
+            var data = JSON.parse(request.responseText);
+            var rangeStart = data["startAt"];
+            var results = data["issues"].length;
+            totalIssuies = data["total"];
+            mainModel = data["issues"];
+            title = "View " + rangeStart + " - " + results + " (total " + totalIssuies + ")";
+        }
+        repaintKanban();
+    });
+}
+
+function readProjects(url)
+{
+    sendGetRequest(url + "/rest/api/2/project", function(request) {
+        console.log("readProjects", request);
+        if (request === null) {
+            projects = [];
+        } else {
+            projects = JSON.parse(request.responseText);
+        }
+    });
 }
 
 function repaintKanban()
 {
-    saveSetting('jiraGroups', kanbanParams1.groupList)
     saveSetting('jiraGroupIndex', kanbanParams1.groupVariant)
+
     model.clear()
     var list = mainModel
-    var groups = kanbanParams1.groupList.trim().split(',')
-    var gPath = kanbanParams1.groupValuePath
+    var groupPath = kanbanParams1.groupPath;
     var models = {}
+    var groups =  kanbanParams1.groupVariant === 0 && defaultGroups.length > 0 ? defaultGroups.split(";") : [];
+
     for(var i in list) {
         var item = list[i]
-        var g = getValue(item, gPath)
+        var g = getValue(item, groupPath)
         if(!(g in models))
             models[g] = []
         models[g].push({ issueRecord: item } )
     }
-    if(groups.length === 0 ||
-            (groups.length === 1 && groups[0] === '')) {
+    if (groups.length === 0) {
         groups = []
         for(g in models)
             groups.push(g)
@@ -59,10 +91,7 @@ function repaintKanban()
             iss = models[g]
         if(g === null)
             g = '(null)'
-        model.append({
-                         groupName: g,
-                         issueList: iss
-                     });
+        model.append({groupName: g, issueList: iss});
     }
 }
 
@@ -81,16 +110,19 @@ function loadSettings()
                     for(var i = 0; i < rs.rows.length; i++) {
                         var skey = rs.rows.item(i).skey
                         var svalue = rs.rows.item(i).svalue
-                        if(skey === 'jiraGroups')
-                            kanbanParams1.groupList = svalue
-                        else if(skey === 'jiraGroupIndex')
+                        if(skey === 'jiraGroupIndex')
                             kanbanParams1.groupVariant = svalue
                         else if(skey === 'query')
-                            queryTE.text = svalue
+                            queryEdit.text = svalue
+                        else if(skey === 'auth')
+                            authHash = svalue
+                        else if(skey === 'user')
+                            user = svalue
+                        else if(skey === 'url')
+                            url = svalue
                     }
                 }
                 )
-
 }
 
 function saveSetting(skey, svalue)
@@ -110,7 +142,7 @@ function readIssuesSimple(queryUrl)
     saveSetting('query',queryUrl)
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function() {
-        if (doc.readyState == XMLHttpRequest.DONE) {
+        if (doc.readyState === XMLHttpRequest.DONE) {
             var data = JSON.parse(doc.responseText);
             mainModel = data["issues"]
             model.clear()

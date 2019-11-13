@@ -1,107 +1,49 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.2
 import QtQuick.LocalStorage 2.0
 import "methods.js" as JS
 
-Item {
-    width: 480
-    height: cbGroupField.height
+RowLayout {
+    implicitWidth: 480
+    implicitHeight: cbGroupField.height
     property alias groupVariant: cbGroupField.currentIndex
-    property string groupValuePath: cbGroupField.model.get(cbGroupField.currentIndex).namePath
-    property alias groupList: groupsTE.text
+    property string groupPath: cbGroupField.model.get(cbGroupField.currentIndex).namePath
 
     Text {
         id: label
-        height: cbGroupField.height
-        text: qsTr("Группировать:")
+        text: qsTr("Группировка:")
         verticalAlignment: Text.AlignVCenter
     }
 
     ComboBox {
         id: cbGroupField
-        anchors { left: label.right; leftMargin: 4 }
         model: ListModel {
             ListElement {
-                text: qsTr("по статусам")
+                text: qsTr("Статус")
                 namePath: "fields/status/name"
             }
             ListElement {
-                text: qsTr("по исполнителям")
+                text: qsTr("Назначен")
                 namePath: "fields/assignee/displayName"
             }
             ListElement {
-                text: qsTr("по создателям")
+                text: qsTr("Автор")
                 namePath: "fields/creator/displayName"
             }
             ListElement {
-                text: qsTr("по типам запросов")
+                text: qsTr("Тип")
                 namePath: "fields/issuetype/name"
             }
             ListElement {
-                text: qsTr("по приоритетам")
+                text: qsTr("Приоритет")
                 namePath: "fields/priority/name"
             }
         }
-    }
-    TextField {
-        id: groupsTE
-        text: ''
-        anchors {
-            right: buttonGroups.left
-            rightMargin: 4
-            left: cbGroupField.right
-            leftMargin: 4
+
+        onCurrentIndexChanged: {
+            groupPath = model.get(currentIndex).namePath;
+            JS.repaintKanban();
         }
     }
-
-    Button {
-        id: buttonGroups
-        text: qsTr("Перерисовать")
-        anchors.right: parent.right
-        onClicked: JS.repaintKanban()
-    }
-
-    Rectangle {
-        id: groupBox1
-        anchors.top: groupsTE.bottom
-        anchors.left: groupsTE.left
-        anchors.right: groupsTE.right
-        //x: 380
-        visible: false
-        color: "white"
-        height: grBox.height+4
-        GroupBox {
-            id: grBox
-            title: qsTr("")
-            y: 2
-            anchors.left: parent.left
-            anchors.leftMargin: 2
-            anchors.right: parent.right
-            anchors.rightMargin: 2
-            height: 100
-
-            Column {
-                id: groupBoxInternal
-                Repeater {
-                    id: groupView
-                    model:  ListModel {
-                        ListElement {
-                            title: qsTr("Low")
-                        }
-                        ListElement {
-                            title: qsTr("Medium")
-                        }
-                        ListElement {
-                            title: qsTr("High")
-                        }
-                    }
-                    delegate: CheckBox {
-                        text: title
-//                        anchors {top: groupBox1.top; left: groupBox1.left }
-                    }
-                }
-            }
-        }
-    }
-
 }

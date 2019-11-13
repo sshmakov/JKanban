@@ -4,19 +4,19 @@ import "methods.js" as JS
 Rectangle {
     id: rectangle1
     color: "#f1dada"
-    radius: 10
+    radius: 0
     gradient: Gradient {
         GradientStop {
             position: 0.00;
-            color: "#f5f2d8";
+            color: "#f5f2f2";
         }
         GradientStop {
             position: 1.00;
             color: "#ffffff";
         }
     }
-    border.color: "#abfdf4"
-    width: 300
+    border.color: "#808285"
+    width: 150
     height: 150
 
     property var issue: null
@@ -29,7 +29,12 @@ Rectangle {
         keyText.text = key
         keyText.url = url
         summaryText.text = JS.getValue(issue,"fields/summary")
-        dateText.text = (new Date(JS.getValue(issue,"fields/created"))).toLocaleString()
+        dateText.text = (new Date(JS.getValue(issue,"fields/created"))).toLocaleString('', {
+                                                                                           weekday: "short",
+                                                                                           year: "numeric",
+                                                                                           month: "2-digit",
+                                                                                           day: "numeric"
+                                                                                       })
         creatorText.text = JS.getValue(issue,"fields/creator/displayName")
         var v = JS.getValue(issue,"fields/assignee/displayName")
         assigneeText.text = v === null ? "(no assigned)" : v
@@ -38,6 +43,7 @@ Rectangle {
         priorityImage.source = typeof img == 'undefined' || img === null ? "" : img
         img = JS.getValue(issue,"fields/issuetype/iconUrl")
         typeImage.source = typeof img == 'undefined' || img === null ? "" : img
+        statusText.text = JS.getValue(issue,"fields/status/name")
     }
 
     Text {
@@ -58,6 +64,18 @@ Rectangle {
 //            acceptedButtons: Qt.NoButton
             onClicked: Qt.openUrlExternally(parent.url)
         }
+    }
+
+    Text {
+        id: statusText
+        x: 8
+        y: 128
+        text: "null"
+        anchors.top: parent.top
+        anchors.topMargin: 8
+        anchors.left: keyText.right
+        anchors.leftMargin: 8
+        font.pixelSize: 10
     }
 
     Text {
@@ -84,7 +102,6 @@ Rectangle {
         anchors.topMargin: 9
         anchors.right: parent.right
         anchors.rightMargin: 8
-        source: "minor.svg"
     }
 
     Image {
@@ -131,6 +148,5 @@ Rectangle {
         anchors.right: parent.right
         font.pixelSize: 12
     }
-
 }
 

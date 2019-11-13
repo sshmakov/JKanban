@@ -3,11 +3,8 @@
         <file>main.qml</file>
         <file>KanbanColumn.qml</file>
         <file>ListSelector.qml</file>
-        <file>PetsModel.qml</file>
-        <file>JiraSimpleModel.qml</file>
         <file>methods.js</file>
         <file>IssueCard.qml</file>
-        <file>minor.svg</file>
         <file>KanbanWindow.qml</file>
         <file>KanbanParams.qml</file>
     </qresource>

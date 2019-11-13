@@ -1,4 +1,4 @@
-# JKanban
-Kanban board for Atlassian Jira - QML
+# OpenJiraKanaban
 
-Описание в статье https://habrahabr.ru/post/351390/
+fork of https://github.com/sshmakov/JKanban
+

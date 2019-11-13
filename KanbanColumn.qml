@@ -6,7 +6,8 @@ import "methods.js" as Utils
 Rectangle {
     id: root
 
-    width: 300; height: 300
+    width: 250
+    height: 250
     property string title: "Title"
     property var issues: null
 
@@ -143,7 +144,7 @@ Rectangle {
         height: titleText.height+10
         Text {
             id: titleText
-            text: root.title
+            text: root.title + " (" + (issues ? issues.rowCount() : 0) + ")"
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: 12
